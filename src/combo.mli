@@ -13,8 +13,12 @@ val return : 'a -> ('s, 'a) parser
 val fail: ('s, 'a) parser
 
 (** Sequence combinator appliying the result of the second parser to the first
-   parser.*)
+   parser. *)
 val ( <*> ) : ('s, 'b -> 'a) parser -> ('s, 'b) parser -> ('s, 'a) parser
+
+(** [<**>] is the sequencing operator applying its right-hand side operand to
+   the left-hand side one, instead of doing it in the other way. *)
+val ( <**> ) : ('s, 'b) parser -> ('s, 'b -> 'a) parser -> ('s, 'a) parser
 
 (** Sequence monad. *)
 val ( >>= ) : ('s, 'a) parser -> ('a -> ('s, 'b) parser) -> ('s, 'b) parser

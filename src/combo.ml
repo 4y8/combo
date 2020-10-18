@@ -56,6 +56,9 @@ let ( *> ) p q =
 let ( <* ) p q =
   (const <$> p) <*> q
 
+let (<**>) p1 p2 =
+  (fun x f -> f x) <$> p1 <*> p2
+
 let sat f =
   fun s ->
   match s with
