@@ -2,6 +2,20 @@ open Fun
 
 type ('a, 'b) parser = 'a list -> ('b * 'a list) option
 
+(* Helper functions *)
+let rec explode s =
+  match s with
+    "" -> []
+  | _  ->
+    (String.get s 0) ::
+    (explode (String.sub s 1 (String.length s - 1)))
+
+let rec inplode s =
+  match s with
+    [] -> ""
+  | hd :: tl ->
+    (String.make 1 hd) ^ (inplode tl)
+
 let return a =
   fun s -> Some (a, s)
 
@@ -33,8 +47,11 @@ let ( <|> ) p1 p2 =
 let ( <$> ) f p =
   (return f) <*> p
 
+let ( <$ ) f p =
+  (const <$> return f) <*> p
+
 let ( *> ) p q =
-  ((flip const) <$> p) <*> q
+  (id <$ p) <*> q
 
 let ( <* ) p q =
   (const <$> p) <*> q
@@ -63,7 +80,22 @@ let alpha =
 let digit =
   range '0' '9'
 
-let any s =
-  match s with
+let any =
+  function
     [] -> None
   | hd :: tl -> Some (hd, tl)
+
+let opt default x =
+  x <|> return default
+
+let rec many p =
+  opt [] (p >>= fun r -> many p >>= fun rs -> return (r :: rs))
+
+let many1 p =
+  List.cons <$> p <*> many p
+
+let rec word w =
+  match explode w with
+    [] -> return []
+  | hd :: tl ->
+     (List.cons <$> char hd) <*> word (inplode tl)
