@@ -5,9 +5,6 @@ type ('a, 'b) parser = 'a list -> ('b * 'a list) option
 let return a =
   fun s -> Some (a, s)
 
-let fail =
-  const None
-
 let (<*>) p1 p2 =
   fun s ->
   match p1 s with

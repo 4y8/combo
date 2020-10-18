@@ -1,0 +1,11 @@
+opam-version: "2.0"
+name: "combo"
+version: "0.1"
+maintainer: "yul3n"
+authors: "yul3n"
+homepage: "https://github.com/Yul3n/combo"
+license: "BSD-3"
+bug-reports: "https://github.com/Yul3n/combo/issues"
+synopsis: "A simple monadic parser combinator library for Ocaml"
+description: "Combo provides some standard parser combinators for Ocaml similar 
+to the one found in Parsec."
