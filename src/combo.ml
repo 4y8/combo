@@ -39,4 +39,24 @@ let ( *> ) p q =
 let ( <* ) p q =
   (const <$> p) <*> q
 
+let sat f =
+  fun s ->
+  match s with
+    hd :: tl when f hd -> Some (hd, tl)
+  | _ -> None
+
+let char c =
+  sat ((=) c)
+
+let alpha =
+  sat (function 'a' .. 'z' | 'A' .. 'Z' -> true | _ -> false)
+
+let digit =
+  sat (function '0' .. '9' -> true | _ -> false)
+
+let any s =
+  match s with
+    [] -> None
+  | hd :: tl -> Some (hd, tl)
+ 
 let _ = print_endline "Hello"
