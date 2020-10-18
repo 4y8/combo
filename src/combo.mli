@@ -35,6 +35,15 @@ val sat : ('a -> bool) -> ('a, 'a) parser
 (** A parser that matches the given character. *)
 val char : char -> (char, char) parser
 
+(** A parser that matches a character in the given range, inclusive. *)
+val range : char -> char -> (char, char) parser
+
+(** A parser that matches an lowercase character *)
+val lower : (char, char) parser
+
+(** A parser that matches an uppercase character *)
+val upper : (char, char) parser
+
 (** A parser that matches an alphabet character. *)
 val alpha : (char, char) parser
 

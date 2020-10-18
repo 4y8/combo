@@ -48,15 +48,22 @@ let sat f =
 let char c =
   sat ((=) c)
 
+let range l r =
+  sat (fun x -> l <= x && x <= r)
+
+let lower =
+  range 'a' 'z'
+
+let upper =
+  range 'A' 'Z'
+
 let alpha =
-  sat (function 'a' .. 'z' | 'A' .. 'Z' -> true | _ -> false)
+  lower <|> upper
 
 let digit =
-  sat (function '0' .. '9' -> true | _ -> false)
+  range '0' '9'
 
 let any s =
   match s with
     [] -> None
   | hd :: tl -> Some (hd, tl)
- 
-let _ = print_endline "Hello"
