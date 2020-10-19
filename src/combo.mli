@@ -1,9 +1,11 @@
 (* Utils ***********************************************************************)
 
+(** [explode s] turns the string [s] into a list of characters. *)
 val explode : string -> char list
+(** [inplode l] turns the list of characters [l] into a string. *)
 val inplode : char list -> string
 
-(** Basic type of parsers. *)
+(** [parser] is the type of parsers. *)
 type ('a, 'b) parser = 'a list -> ('b * 'a list) option
 
 (* Basic combinators ***********************************************************)
@@ -15,12 +17,12 @@ val return : 'a -> ('s, 'a) parser
 (** [fail] is a basic combinator which always fails. *)
 val fail: ('s, 'a) parser
 
-(** Sequence combinator appliying the result of the second parser to the first
-   parser. *)
+(** [p <*> q] is the sequence combinator appliying the result of parser [p] to
+   the parser [q]. *)
 val ( <*> ) : ('s, 'b -> 'a) parser -> ('s, 'b) parser -> ('s, 'a) parser
 
-(** [<**>] is the sequencing operator applying its right-hand side operand to
-   the left-hand side one, instead of doing it in the other way. *)
+(** [p <**> q] is the sequence combinator applying the result of parser [q] to
+   the parser [p], it is the same as [<*>] but in the other way. *)
 val ( <**> ) : ('s, 'b) parser -> ('s, 'b -> 'a) parser -> ('s, 'a) parser
 
 (** [<??>] is the reverse sequencing operator but which doesn't modify the first
@@ -30,21 +32,24 @@ val ( <??> ) : ('s, 'a) parser -> ('s, 'a -> 'a) parser -> ('s, 'a) parser
 (** Sequence monad. *)
 val ( >>= ) : ('s, 'a) parser -> ('a -> ('s, 'b) parser) -> ('s, 'b) parser
 
-(** Choice combinator trying the first parser, if it works, return the result,
-   else return the result of the second parser. *)
+(** [p <|> q] is the choice combinator trying the parser [p], if it works,
+   returns the result, else return the result of the parser [q]. *)
 val ( <|> ) : ('s, 'a) parser -> ('s, 'a) parser -> ('s, 'a) parser
 
-(** Map combinator applying the result of the given parser to the given
-   function, if he succeeds. *)
+(** [f <$> p] is the map combinator applying the function [f] the witness
+   returned by the parser [p], if he succeeds. *)
 val ( <$> ) : ('b -> 'a) -> ('s, 'b) parser -> ('s, 'a) parser
 
-(** Map combinator ignoring the right value. *)
+(** [f <$ p] is the map combinator ignoring the value returned by the parser
+   [p]. *)
 val ( <$ ) : ('b -> 'a) -> ('s, 'c) parser -> ('s, 'b -> 'a) parser
 
-(** Sequence combinator ignoring the left value. *)
+(** [p *> q] is the sequence combinator but ignores value returned by the parser
+   [p], it's the missing bracket. *)
 val ( *> ) : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b) parser
 
-(** Sequence combinator ignoring the right value. *)
+(** [p <* q] is the sequence combinator but ignores value returned by the parser
+   [q], it's the missing bracket. *)
 val ( <* ) : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'a) parser
 
 (** [choice l] is a combinator that turns the list of parser [l] into a single

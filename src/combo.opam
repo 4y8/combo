@@ -6,6 +6,6 @@ authors: "yul3n"
 homepage: "https://github.com/Yul3n/combo"
 license: "BSD-3"
 bug-reports: "https://github.com/Yul3n/combo/issues"
-synopsis: "A simple monadic parser combinator library for Ocaml"
-description: "Combo provides some standard parser combinators for Ocaml similar 
-to the one found in Parsec."
+synopsis: "A simple parser combinator library for Ocaml"
+description: "Combo is a simple parser combinator library for Ocaml providing
+common parsers and combinators."
