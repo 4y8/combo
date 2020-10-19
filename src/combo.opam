@@ -9,3 +9,7 @@ bug-reports: "https://github.com/Yul3n/combo/issues"
 synopsis: "A simple parser combinator library for Ocaml"
 description: "Combo is a simple parser combinator library for Ocaml providing
 common parsers and combinators."
+build: [
+  ["dune" "subst"] {pinned}
+  ["dune" "build" "-p" name "-j" jobs]
+]
