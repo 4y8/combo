@@ -1,5 +1,7 @@
 open Fun
 
+let (%) f g x = f (g x) 
+
 type ('a, 'b) parser = 'a list -> ('b * 'a list) option
 
 (* Helper functions *)
@@ -22,26 +24,26 @@ let return a =
 let fail =
   fun _ -> None
 
-let ( <*> ) p1 p2 =
+let ( <*> ) p q =
   fun s ->
-  match p1 s with
+  match p s with
     None -> None
   | Some (a, s) ->
-     match p2 s with
+     match q s with
        None -> None
      | Some (b, s) -> Some (a b, s)
 
-let ( >>= ) p1 p2 =
+let ( >>= ) p q =
   fun s ->
-  match p1 s with
+  match p s with
     None -> None
   | Some (a, s) ->
-     p2 a s
+     q a s
 
-let ( <|> ) p1 p2 =
+let ( <|> ) p q =
   fun s ->
-  match p1 s with
-    None -> p2 s
+  match p s with
+    None -> q s
   | Some _ as r -> r
 
 let ( <$> ) f p =
@@ -56,8 +58,14 @@ let ( *> ) p q =
 let ( <* ) p q =
   (const <$> p) <*> q
 
-let (<**>) p1 p2 =
-  (fun x f -> f x) <$> p1 <*> p2
+let ( <**> ) p q =
+  (fun x f -> f x) <$> p <*> q
+
+let opt default x =
+  x <|> return default
+
+let ( <??> ) p q =
+  p <**> opt id q
 
 let sat f =
   fun s ->
@@ -65,8 +73,20 @@ let sat f =
     hd :: tl when f hd -> Some (hd, tl)
   | _ -> None
 
-let char c =
-  sat ((=) c)
+let sym s =
+  sat ((=) s)
+
+let rec syms s =
+  match s with
+    [] -> return []
+  | hd :: tl ->
+     List.cons <$> sym hd <*> syms tl
+
+let char =
+  sym
+
+let word =
+  syms % explode
 
 let range l r =
   sat (fun x -> l <= x && x <= r)
@@ -88,23 +108,30 @@ let any =
     [] -> None
   | hd :: tl -> Some (hd, tl)
 
-let opt default x =
-  x <|> return default
-
 let rec many p =
-  opt [] (p >>= fun r -> many p >>= fun rs -> return (r :: rs))
+  opt [] (p >>= fun hd -> many p >>= fun tl -> return (hd :: tl))
 
 let many1 p =
   List.cons <$> p <*> many p
 
-let rec word w =
-  match explode w with
-    [] -> return []
-  | hd :: tl ->
-     (List.cons <$> char hd) <*> word (inplode tl)
+let rec appall x =
+  function
+    [] -> x
+  | hd :: tl -> appall (hd x) tl
+
+let chainl op p =
+  appall <$> p <*> many (flip <$> op <*> p)
+
+let rec chainr op p =
+  p <??> (op >>= fun x -> chainr op p >>= fun y -> return (flip x y))
+
+let choice x = List.fold_right (<|>) x fail
 
 let space =
   char ' '
 
 let spaces =
   many space
+
+let pack l p r =
+  syms l *> p <* syms r
