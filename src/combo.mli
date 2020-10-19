@@ -62,6 +62,12 @@ val alpha : (char, char) parser
 (** [digit] is a parser that matches a digit. *)
 val digit : (char, char) parser
 
+(** [space] is a parser that matches a space. *)
+val space : (char, char) parser
+
+(** [spaces] is a parser that matches 0 or more spaces. *)
+val spaces : (char, char list) parser
+
 (** [any] is a parser that matches anything. *)
 val any : ('a, 'a) parser
 

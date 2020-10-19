@@ -102,3 +102,9 @@ let rec word w =
     [] -> return []
   | hd :: tl ->
      (List.cons <$> char hd) <*> word (inplode tl)
+
+let space =
+  char ' '
+
+let spaces =
+  many space
