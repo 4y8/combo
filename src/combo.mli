@@ -2,6 +2,7 @@
 
 (** [explode s] turns the string [s] into a list of characters. *)
 val explode : string -> char list
+
 (** [inplode l] turns the list of characters [l] into a string. *)
 val inplode : char list -> string
 

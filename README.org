@@ -1,26 +1,28 @@
 * Combo
 Combo is a simple parser combinator library for Ocaml providing common parsers
 and combinators. It is highly inspired by [[http://www.cs.uu.nl/research/techreps/repo/CS-2008/2008-044.pdf][this]] paper with a few changes to
-integrate better with Ocaml and ideas taken from other libraries.
+integrate better with Ocaml and ideas taken from other libraries. It is named
+combo because it is based on COMBinig COMBinators in Ocaml.
 ** Example
 Here is a simple calculator described in the paper:
 #+BEGIN_SRC ocaml
   open Combo
   open Fun
 
-  let positive = (int_of_string <$> (inplode <$> many1 digit))
-  let int = (opt id ((( * ) (-1)) <$ char '-')) <*> positive 
+  let positive = int_of_string <$> (inplode <$> many1 digit)
+  let int = opt id (( * ) (-1) <$ char '-') <*> positive 
 
   let op (f, s) = spaces *> (f <$ word s) <* spaces
   let anyop l = choice (List.map op l)
   let addops = anyop [(+), "+"; (-), "-"]
   let mulops = anyop [( * ), "*"]
   let rec expr s =
-    List.fold_right chainl [addops; mulops] (int <|> packs "(" expr ")") s
+    List.fold_right chainl [addops; mulops] (int <|> packs "(" expr ")")  s
 
   let () =
-    match expr (explode "(13 + 2) * 2") with
-      None -> ()
+    let s = read_line () in
+    match expr (explode s) with
+      None -> print_endline "ERROR: bad expression." 
     | Some (n, _) -> print_int n
 #+END_SRC
 ** Documentation (extracted from the mli file)

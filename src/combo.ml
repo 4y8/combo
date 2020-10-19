@@ -126,7 +126,13 @@ let chainl op p =
 let rec chainr op p =
   p <??> (op >>= fun x -> chainr op p >>= fun y -> return (flip x y))
 
-let choice x = List.fold_right (<|>) x fail
+let choice l =
+  List.fold_right (<|>) l fail
+
+let rec seq =
+  function
+    [] -> return []
+  | hd :: tl -> List.cons <$> hd <*> seq tl
 
 let space =
   char ' '
