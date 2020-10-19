@@ -142,15 +142,27 @@ all the obtained results in a list.
 #+BEGIN_SRC ocaml
   val many1 : ('s, 'a) parser -> ('s, 'a list) parser
 #+END_SRC
-~chainl op p~ is a parser that parses the operand ~p~, as left-associative,
-separated by the separator ~op~.
+~chainl1 op p~ is a parser that parses the operand ~p~, as left-associative,
+separated by the separator ~op~, one or more times.
 #+BEGIN_SRC ocaml
-  val chainl : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> ('s, 'a) parser
+  val chainl1 : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> ('s, 'a) parser
 #+END_SRC
-~chainr op p~ is a parser that parses the operand ~p~, as right-associative,
-separated by the separator ~op~. 
+~chainl op p default~ is a parser that parses the operand ~p~, as
+left-associative, separated by the separator ~op~, if it failed, returns the
+value ~default~.
 #+BEGIN_SRC ocaml
-  val chainr : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> ('s, 'a) parser
+  val chainl : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> 'a -> ('s, 'a) parser
+#+END_SRC
+~chainr1 op p~ is a parser that parses the operand ~p~, as right-associative,
+separated by the separator ~op~, one or more times. 
+#+BEGIN_SRC ocaml
+  val chainr1 : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> ('s, 'a) parser
+#+END_SRC
+~chainr op p default~ is a parser that parses the operand ~p~, as
+right-associative, separated by the separator ~op~, if it failed, returns the
+value ~default~.
+#+BEGIN_SRC ocaml
+  val chainr : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> 'a -> ('s, 'a) parser
 #+END_SRC
 ~sym s~ is a parser that matches the symbol ~s~. 
 #+BEGIN_SRC ocaml

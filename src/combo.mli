@@ -91,13 +91,23 @@ val many : ('s, 'a) parser -> ('s, 'a list) parser
    all the obtained results in a list. *)
 val many1 : ('s, 'a) parser -> ('s, 'a list) parser
 
-(** [chainl op p] is a parser that parses the operand [p], as left-associative,
-   separated by the separator [op]. *)
-val chainl : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> ('s, 'a) parser
+(** [chainl1 op p] is a parser that parses the operand [p], as left-associative,
+   separated by the separator [op], one or more times. *)
+val chainl1 : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> ('s, 'a) parser
 
-(** [chainr op p] is a parser that parses the operand [p], as right-associative,
-   separated by the separator [op]. *)
-val chainr : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> ('s, 'a) parser
+(** [chainl op p default] is a parser that parses the operand [p], as
+   left-associative, separated by the separator [op], if it failed, returns the
+   value [default]. *)
+val chainl : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> 'a -> ('s, 'a) parser
+
+(** [chainr1 op p] is a parser that parses the operand [p], as right-associative,
+   separated by the separator [op], one or more times. *)
+val chainr1 : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> ('s, 'a) parser
+
+(** [chainr op p default] is a parser that parses the operand [p], as
+   right-associative, separated by the separator [op], if it failed, returns the
+   value [default]. *)
+val chainr : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> 'a -> ('s, 'a) parser
 
 (** [sym s] is a parser that matches the symbol [s]. *)
 val sym : 'a -> ('a, 'a) parser
@@ -105,7 +115,7 @@ val sym : 'a -> ('a, 'a) parser
 (** [syms s] is a parser that matches the list of symbol [s]. *)
 val syms : 'a list -> ('a, 'a list) parser
 
-(** A parser that matches the given character. *)
+(** [char c] is a parser that matches the character [c]. *)
 val char : char -> (char, char) parser
 
 (** [word w] is a parser that matches the string [w]. *)
@@ -140,3 +150,5 @@ val pack : 's list -> ('s, 'a) parser -> 's list -> ('s, 'a) parser
 (** [packs l p r] is a parser that matches the parser [p] between the strings
    [l] and [r]. *)
 val packs : string -> (char, 'a) parser -> string -> (char, 'a) parser
+
+(* Quousque tandem abutere, Catilina, patientia nostra? ************************)

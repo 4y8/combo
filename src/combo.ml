@@ -135,11 +135,17 @@ let rec appall x =
     [] -> x
   | hd :: tl -> appall (hd x) tl
 
-let chainl op p =
+let chainl1 op p =
   appall <$> p <*> many (flip <$> op <*> p)
 
-let rec chainr op p =
-  p <??> (flip <$> op <*>| lazy (chainr op p)) 
+let chainl op p default =
+  opt default (chainl1 op p)
+
+let rec chainr1 op p =
+  p <??> (flip <$> op <*>| lazy (chainr1 op p)) 
+
+let chainr op p default =
+  opt default (chainr1 op p)
 
 let choice l =
   List.fold_right (<|>) l fail

@@ -9,7 +9,7 @@ let anyop l = choice (List.map op l)
 let addops = anyop [(+), "+"; (-), "-"]
 let mulops = anyop [( * ), "*"]
 let rec expr s =
-  List.fold_right chainl [addops; mulops] (int <|> packs "(" expr ")")  s
+  List.fold_right chainl1 [addops; mulops] (int <|> packs "(" expr ")")  s
 
 let () =
   let s = read_line () in
