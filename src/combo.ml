@@ -1,10 +1,11 @@
 open Fun
 
-let (%) f g x = f (g x) 
-
 type ('a, 'b) parser = 'a list -> ('b * 'a list) option
 
 (* Helper functions *)
+
+let (%) f g x = f (g x) 
+
 let rec explode s =
   match s with
     "" -> []
