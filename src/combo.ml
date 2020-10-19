@@ -68,10 +68,10 @@ let opt default x =
 let ( <??> ) p q =
   p <**> opt id q
 
-let sat f =
+let sat p =
   fun s ->
   match s with
-    hd :: tl when f hd -> Some (hd, tl)
+    hd :: tl when p hd -> Some (hd, tl)
   | _ -> None
 
 let sym s =
@@ -136,3 +136,6 @@ let spaces =
 
 let pack l p r =
   syms l *> p <* syms r
+
+let packs l p r =
+  word l *> p <* word r

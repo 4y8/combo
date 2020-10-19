@@ -1,4 +1,4 @@
-(* Utils *)
+(* Utils ***********************************************************************)
 
 val explode : string -> char list
 val inplode : char list -> string
@@ -6,7 +6,10 @@ val inplode : char list -> string
 (** Basic type of parsers. *)
 type ('a, 'b) parser = 'a list -> ('b * 'a list) option
 
-(** A basic combinator that always succeeds returning the given value. *)
+(* Basic combinators ***********************************************************)
+
+(** [return a] is a basic combinator that always succeeds returning the value
+   [a]. *)
 val return : 'a -> ('s, 'a) parser
 
 (** [fail] is a basic combinator which always fails. *)
@@ -44,11 +47,17 @@ val ( *> ) : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b) parser
 (** Sequence combinator ignoring the right value. *)
 val ( <* ) : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'a) parser
 
-(** [choice l] turns the list of parser l into a single one. *)
+(** [choice l] is a combinator that turns the list of parser [l] into a single
+   one which will match one of them. *)
 val choice : ('s, 'a) parser list -> ('s, 'a) parser
 
-(* Basic parsers *)
-(** A parser that matches an element satisfying the given predicate. *)
+(** [seq l] is a combinator that turns a list of parser [l] into a single one
+   which will match all of them and return the result in a list. *)
+val seq : ('s, 'a) parser list -> ('s, 'a list) parser
+
+(* Basic parsers ***************************************************************)
+
+(** [sat p] is a parser that matches an element satisfying the predicate [p]. *)
 val sat : ('a -> bool) -> ('a, 'a) parser
 
 (** [any] is a parser that matches anything. *)
@@ -86,16 +95,17 @@ val char : char -> (char, char) parser
 (** [word w] is a parser that matches the string [w]. *)
 val word : string -> (char, char list) parser 
 
-(** A parser that matches a character in the given range, inclusive. *)
+(** [range l r] is a parser that matches a character between the characters [l]
+   and [r] included. *)
 val range : char -> char -> (char, char) parser
 
-(** A parser that matches an lowercase character *)
+(** [lower] is a parser that matches a lowercase character *)
 val lower : (char, char) parser
 
-(** A parser that matches an uppercase character *)
+(** [upper] is a parser that matches an uppercase character *)
 val upper : (char, char) parser
 
-(** A parser that matches an alphabet character. *)
+(** [alpha] is a parser that matches an alphabet character. *)
 val alpha : (char, char) parser
 
 (** [digit] is a parser that matches a digit. *)
@@ -107,6 +117,10 @@ val space : (char, char) parser
 (** [spaces] is a parser that matches 0 or more spaces. *)
 val spaces : (char, char list) parser
 
-(** [pack l p r] is a parser that matches [p] between the symbols [l] and
-   [r]. *)
+(** [pack l p r] is a parser that matches the parser [p] between the symbols [l]
+   and [r]. *)
 val pack : 's list -> ('s, 'a) parser -> 's list -> ('s, 'a) parser
+
+(** [packs l p r] is a parser that matches the parser [p] between the strings
+   [l] and [r]. *)
+val packs : string -> (char, 'a) parser -> string -> (char, 'a) parser
