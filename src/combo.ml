@@ -34,6 +34,15 @@ let ( <*> ) p q =
        None -> None
      | Some (b, s) -> Some (a b, s)
 
+let ( <*>| ) p q =
+  fun s ->
+  match p s with
+    None -> None
+  | Some (a, s) ->
+     match (Lazy.force q) s with
+       None -> None
+     | Some (b, s) -> Some (a b, s)
+
 let ( >>= ) p q =
   fun s ->
   match p s with
@@ -45,6 +54,12 @@ let ( <|> ) p q =
   fun s ->
   match p s with
     None -> q s
+  | Some _ as r -> r
+
+let ( <|>| ) p q =
+  fun s ->
+  match p s with
+    None -> (Lazy.force q) s
   | Some _ as r -> r
 
 let ( <$> ) f p =
@@ -110,7 +125,7 @@ let any =
   | hd :: tl -> Some (hd, tl)
 
 let rec many p =
-  opt [] (p >>= fun hd -> many p >>= fun tl -> return (hd :: tl))
+  opt [] (List.cons <$> p <*>| (lazy (many p)))
 
 let many1 p =
   List.cons <$> p <*> many p
@@ -124,7 +139,7 @@ let chainl op p =
   appall <$> p <*> many (flip <$> op <*> p)
 
 let rec chainr op p =
-  p <??> (op >>= fun x -> chainr op p >>= fun y -> return (flip x y))
+  p <??> (flip <$> op <*>| lazy (chainr op p)) 
 
 let choice l =
   List.fold_right (<|>) l fail

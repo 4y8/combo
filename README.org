@@ -31,12 +31,10 @@ Here is a simple calculator described in the paper:
 #+BEGIN_SRC ocaml
   val explode : string -> char list
 #+END_SRC
-
 ~inplode l~ turns the list of characters ~l~ into a string. 
 #+BEGIN_SRC ocaml
   val inplode : char list -> string
 #+END_SRC
-
 ~parser~ is the type of parsers. 
 #+BEGIN_SRC ocaml
   type ('a, 'b) parser = 'a list -> ('b * 'a list) option
@@ -47,180 +45,163 @@ Here is a simple calculator described in the paper:
 #+BEGIN_SRC ocaml
   val return : 'a -> ('s, 'a) parser
 #+END_SRC
-
 ~fail~ is a basic combinator which always fails. 
 #+BEGIN_SRC ocaml
   val fail: ('s, 'a) parser
 #+END_SRC
-
 ~p <*> q~ is the sequence combinator appliying the result of parser ~p~ to
 the parser ~q~. 
 #+BEGIN_SRC ocaml
   val ( <*> ) : ('s, 'b -> 'a) parser -> ('s, 'b) parser -> ('s, 'a) parser
 #+END_SRC
-
 ~p <**> q~ is the sequence combinator applying the result of parser ~q~ to
 the parser ~p~, it is the same as ~<*>~ but in the other way. 
 #+BEGIN_SRC ocaml
   val ( <**> ) : ('s, 'b) parser -> ('s, 'b -> 'a) parser -> ('s, 'a) parser
 #+END_SRC
-
 ~<??>~ is the reverse sequencing operator but which doesn't modify the first
 result if the second one failed. 
 #+BEGIN_SRC ocaml
   val ( <??> ) : ('s, 'a) parser -> ('s, 'a -> 'a) parser -> ('s, 'a) parser
 #+END_SRC
-
 Sequence monad. 
 #+BEGIN_SRC ocaml
   val ( >>= ) : ('s, 'a) parser -> ('a -> ('s, 'b) parser) -> ('s, 'b) parser
 #+END_SRC
-
 ~p <|> q~ is the choice combinator trying the parser ~p~, if it works,
 returns the result, else return the result of the parser ~q~. 
 #+BEGIN_SRC ocaml
   val ( <|> ) : ('s, 'a) parser -> ('s, 'a) parser -> ('s, 'a) parser
 #+END_SRC
-
 ~f <$> p~ is the map combinator applying the function ~f~ the witness
 returned by the parser ~p~, if he succeeds. 
 #+BEGIN_SRC ocaml
   val ( <$> ) : ('b -> 'a) -> ('s, 'b) parser -> ('s, 'a) parser
 #+END_SRC
-
 ~f <$ p~ is the map combinator ignoring the value returned by the parser
 ~p~. 
 #+BEGIN_SRC ocaml
   val ( <$ ) : ('b -> 'a) -> ('s, 'c) parser -> ('s, 'b -> 'a) parser
 #+END_SRC
-
 ~p *> q~ is the sequence combinator but ignores value returned by the parser
 ~p~, it's the missing bracket. 
 #+BEGIN_SRC ocaml
   val ( *> ) : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b) parser
 #+END_SRC
-
 ~p <* q~ is the sequence combinator but ignores value returned by the parser
 ~q~, it's the missing bracket. 
 #+BEGIN_SRC ocaml
   val ( <* ) : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'a) parser
 #+END_SRC
-
 ~choice l~ is a combinator that turns the list of parser ~l~ into a single
 one which will match one of them. 
 #+BEGIN_SRC ocaml
   val choice : ('s, 'a) parser list -> ('s, 'a) parser
 #+END_SRC
-
 ~seq l~ is a combinator that turns a list of parser ~l~ into a single one
 which will match all of them and return the result in a list. 
 #+BEGIN_SRC ocaml
   val seq : ('s, 'a) parser list -> ('s, 'a list) parser
 #+END_SRC
 
+*** Lazy Combinators
+Lazy combinators are really useful for some recursive combinators that may cause
+a stack overflow otherwise.  
+
+~p <*>| q~ is the lazy sequence combinator appliying the result of parser ~p~ to
+the parser ~q~, but only evaluating the parser ~q~ if ~p~ worked.  
+#+BEGIN_SRC ocaml
+  val ( <*>| ) : ('s, 'b -> 'a) parser -> ('s, 'b) parser lazy_t -> ('s, 'a) parser
+#+END_SRC
+~p <|>| q~ is the lazy choice combinator trying the parser ~p~, if it works,
+returns the result, else evaluate the parser ~q~ and returns it result.
+#+BEGIN_SRC ocaml
+  val ( <|>| ) : ('s, 'a) parser -> ('s, 'a) parser lazy_t -> ('s, 'a) parser
+#+END_SRC
 *** Basic parsers
 ~sat p~ is a parser that matches an element satisfying the predicate ~p~. 
 #+BEGIN_SRC ocaml
   val sat : ('a -> bool) -> ('a, 'a) parser
 #+END_SRC
-
 ~any~ is a parser that matches anything. 
 #+BEGIN_SRC ocaml
   val any : ('a, 'a) parser
 #+END_SRC
-
 ~opt default p~ is parser that runs the parser ~p~ and if it succeeds return
 the result, else, it returns the ~default~ value given. 
 #+BEGIN_SRC ocaml
   val opt : 'a -> ('s, 'a) parser -> ('s, 'a) parser
 #+END_SRC
-
 ~many p~ is a parser that runs the parser ~p~ 0 or more times and returns
 all the obtained results in a list. 
 #+BEGIN_SRC ocaml
   val many : ('s, 'a) parser -> ('s, 'a list) parser
 #+END_SRC
-
 ~many1 p~ is a parser that runs the parser ~p~ 1 or more times and returns
 all the obtained results in a list. 
 #+BEGIN_SRC ocaml
   val many1 : ('s, 'a) parser -> ('s, 'a list) parser
 #+END_SRC
-
 ~chainl op p~ is a parser that parses the operand ~p~, as left-associative,
-separated by the separator ~op~. 
+separated by the separator ~op~.
 #+BEGIN_SRC ocaml
   val chainl : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> ('s, 'a) parser
 #+END_SRC
-
 ~chainr op p~ is a parser that parses the operand ~p~, as right-associative,
 separated by the separator ~op~. 
 #+BEGIN_SRC ocaml
   val chainr : ('s, 'a -> 'a -> 'a) parser -> ('s, 'a) parser -> ('s, 'a) parser
 #+END_SRC
-
 ~sym s~ is a parser that matches the symbol ~s~. 
 #+BEGIN_SRC ocaml
   val sym : 'a -> ('a, 'a) parser
 #+END_SRC
-
 ~syms s~ is a parser that matches the list of symbol ~s~. 
 #+BEGIN_SRC ocaml
   val syms : 'a list -> ('a, 'a list) parser
 #+END_SRC
-
-A parser that matches the given character. 
+~char c~ is a parser that matches the character ~c~. 
 #+BEGIN_SRC ocaml
   val char : char -> (char, char) parser
 #+END_SRC
-
 ~word w~ is a parser that matches the string ~w~. 
 #+BEGIN_SRC ocaml
   val word : string -> (char, char list) parser 
 #+END_SRC
-
-~range l r~ is a parser that matches a character between the characters ~l~
-and ~r~ included. 
+~range l r~ is a parser that matches a character between the characters ~l~ and
+~r~ included.
 #+BEGIN_SRC ocaml
   val range : char -> char -> (char, char) parser
 #+END_SRC
-
 ~lower~ is a parser that matches a lowercase character 
 #+BEGIN_SRC ocaml
   val lower : (char, char) parser
 #+END_SRC
-
 ~upper~ is a parser that matches an uppercase character 
 #+BEGIN_SRC ocaml
   val upper : (char, char) parser
 #+END_SRC
-
 ~alpha~ is a parser that matches an alphabet character. 
 #+BEGIN_SRC ocaml
   val alpha : (char, char) parser
 #+END_SRC
-
 ~digit~ is a parser that matches a digit. 
 #+BEGIN_SRC ocaml
   val digit : (char, char) parser
 #+END_SRC
-
 ~space~ is a parser that matches a space. 
 #+BEGIN_SRC ocaml
   val space : (char, char) parser
 #+END_SRC
-
 ~spaces~ is a parser that matches 0 or more spaces. 
 #+BEGIN_SRC ocaml
   val spaces : (char, char list) parser
 #+END_SRC
-
 ~pack l p r~ is a parser that matches the parser ~p~ between the symbols ~l~
 and ~r~. 
 #+BEGIN_SRC ocaml
   val pack : 's list -> ('s, 'a) parser -> 's list -> ('s, 'a) parser
 #+END_SRC
-
 ~packs l p r~ is a parser that matches the parser ~p~ between the strings
 ~l~ and ~r~. 
 #+BEGIN_SRC ocaml

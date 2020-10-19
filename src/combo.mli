@@ -61,6 +61,16 @@ val choice : ('s, 'a) parser list -> ('s, 'a) parser
    which will match all of them and return the result in a list. *)
 val seq : ('s, 'a) parser list -> ('s, 'a list) parser
 
+(* Lazy combinators ************************************************************)
+
+(** [p <*>| q] is the lazy sequence combinator appliying the result of parser
+   [p] to the parser [q], but only evaluating the parser [q] if [p] worked. *)
+val ( <*>| ) : ('s, 'b -> 'a) parser -> ('s, 'b) parser lazy_t -> ('s, 'a) parser
+
+(** [p <|>| q] is the lazy choice combinator trying the parser [p], if it works,
+   returns the result, else evaluate the parser [q] and returns it result. *)
+val ( <|>| ) : ('s, 'a) parser -> ('s, 'a) parser lazy_t -> ('s, 'a) parser
+
 (* Basic parsers ***************************************************************)
 
 (** [sat p] is a parser that matches an element satisfying the predicate [p]. *)
