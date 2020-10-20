@@ -53,6 +53,10 @@ val ( *> ) : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b) parser
    [q], it's the missing bracket. *)
 val ( <* ) : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'a) parser
 
+(** [p <?> err] is the error combinator raising the error err if the parser [p]
+   failed. *)
+val ( <?> ) : ('s, 'a) parser -> exn -> ('s, 'a) parser
+
 (** [choice l] is a combinator that turns the list of parser [l] into a single
    one which will match one of them. *)
 val choice : ('s, 'a) parser list -> ('s, 'a) parser
@@ -60,6 +64,10 @@ val choice : ('s, 'a) parser list -> ('s, 'a) parser
 (** [seq l] is a combinator that turns a list of parser [l] into a single one
    which will match all of them and return the result in a list. *)
 val seq : ('s, 'a) parser list -> ('s, 'a list) parser
+
+(** [between open p close] parses the parser [open], then [p] and [close] and
+   returns the value of p. *)
+val between : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'c) parser -> ('s, 'b) parser
 
 (* Lazy combinators ************************************************************)
 
@@ -71,10 +79,21 @@ val ( <*>| ) : ('s, 'b -> 'a) parser -> ('s, 'b) parser lazy_t -> ('s, 'a) parse
    returns the result, else evaluate the parser [q] and returns it result. *)
 val ( <|>| ) : ('s, 'a) parser -> ('s, 'a) parser lazy_t -> ('s, 'a) parser
 
+(** [p *>| q] is the lazy sequence combinator but ignores value returned by the
+   parser [p], it's the missing bracket. The parser [q] is evaluated only if [p]
+   succeeded. *)
+val ( *>| ) : ('s, 'a) parser -> ('s, 'b) parser lazy_t -> ('s, 'b) parser
+
+(** [p <*| q] is the sequence combinator but ignores value returned by the parser
+   [q], it's the missing bracket. The parser [q] is evaluated only if [p]
+   succeeded. *)
+val ( <*| ) : ('s, 'a) parser -> ('s, 'b) parser lazy_t -> ('s, 'a) parser
+
 (* Basic parsers ***************************************************************)
 
-(** [sat p] is a parser that matches an element satisfying the predicate [p]. *)
-val sat : ('a -> bool) -> ('a, 'a) parser
+(** [satisfy p is a parser that matches an element satisfying the predicate
+   [p]. *)
+val satisfy : ('a -> bool) -> ('a, 'a) parser
 
 (** [any] is a parser that matches anything. *)
 val any : ('a, 'a) parser

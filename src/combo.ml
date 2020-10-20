@@ -74,55 +74,26 @@ let ( *> ) p q =
 let ( <* ) p q =
   (const <$> p) <*> q
 
+let ( *>| ) p q =
+  (id <$ p) <*>| q
+
+let ( <*| ) p q =
+  (const <$> p) <*>| q
+
 let ( <**> ) p q =
   (fun x f -> f x) <$> p <*> q
+
+let ( <?> ) p err =
+  fun s ->
+  match p s with
+    None -> raise err
+  | x -> x
 
 let opt default x =
   x <|> return default
 
 let ( <??> ) p q =
   p <**> opt id q
-
-let sat p =
-  fun s ->
-  match s with
-    hd :: tl when p hd -> Some (hd, tl)
-  | _ -> None
-
-let sym s =
-  sat ((=) s)
-
-let rec syms s =
-  match s with
-    [] -> return []
-  | hd :: tl ->
-     List.cons <$> sym hd <*> syms tl
-
-let char =
-  sym
-
-let word =
-  syms % explode
-
-let range l r =
-  sat (fun x -> l <= x && x <= r)
-
-let lower =
-  range 'a' 'z'
-
-let upper =
-  range 'A' 'Z'
-
-let alpha =
-  lower <|> upper
-
-let digit =
-  range '0' '9'
-
-let any =
-  function
-    [] -> None
-  | hd :: tl -> Some (hd, tl)
 
 let rec many p =
   opt [] (List.cons <$> p <*>| (lazy (many p)))
@@ -155,6 +126,50 @@ let rec seq =
     [] -> return []
   | hd :: tl -> List.cons <$> hd <*> seq tl
 
+let between op p cl =
+  op *> p <* cl
+
+let satisfy p =
+  fun s ->
+  match s with
+    hd :: tl when p hd -> Some (hd, tl)
+  | _ -> None
+
+let sym s =
+  satisfy ((=) s)
+
+let rec syms s =
+  match s with
+    [] -> return []
+  | hd :: tl ->
+     List.cons <$> sym hd <*> syms tl
+
+let char =
+  sym
+
+let word =
+  syms % explode
+
+let range l r =
+  satisfy (fun x -> l <= x && x <= r)
+
+let lower =
+  range 'a' 'z'
+
+let upper =
+  range 'A' 'Z'
+
+let alpha =
+  lower <|> upper
+
+let digit =
+  range '0' '9'
+
+let any =
+  function
+    [] -> None
+  | hd :: tl -> Some (hd, tl)
+
 let space =
   char ' '
 
@@ -162,7 +177,7 @@ let spaces =
   many space
 
 let pack l p r =
-  syms l *> p <* syms r
+  between (syms l) p (syms r)
 
 let packs l p r =
-  word l *> p <* word r
+  between (word l) p (word r)

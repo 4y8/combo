@@ -93,6 +93,11 @@ returned by the parser ~p~, if he succeeds.
 #+BEGIN_SRC ocaml
   val ( <* ) : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'a) parser
 #+END_SRC
+~p <?> err~ is the error combinator raising the error err if the parser ~p~
+failed.
+#+BEGIN_SRC ocaml
+  val( <?> ) : ('s, 'a) parser -> exn -> ('s, 'a) parser
+#+END_SRC
 ~choice l~ is a combinator that turns the list of parser ~l~ into a single
 one which will match one of them. 
 #+BEGIN_SRC ocaml
@@ -103,13 +108,17 @@ which will match all of them and return the result in a list.
 #+BEGIN_SRC ocaml
   val seq : ('s, 'a) parser list -> ('s, 'a list) parser
 #+END_SRC
-
+~between open p close~ parses the parser ~open~, then ~p~ and ~close~ and
+returns the value of ~p~.
+#+BEGIN_SRC ocaml
+  val between : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'c) parser -> ('s, 'b) parser
+#+END_SRC
 *** Lazy Combinators
 Lazy combinators are really useful for some recursive combinators that may cause
 a stack overflow otherwise.  
 
 ~p <*>| q~ is the lazy sequence combinator appliying the result of parser ~p~ to
-the parser ~q~, but only evaluating the parser ~q~ if ~p~ worked.  
+the parser ~q~, but only evaluating the parser ~q~ if ~p~ worked.
 #+BEGIN_SRC ocaml
   val ( <*>| ) : ('s, 'b -> 'a) parser -> ('s, 'b) parser lazy_t -> ('s, 'a) parser
 #+END_SRC
@@ -118,10 +127,22 @@ returns the result, else evaluate the parser ~q~ and returns it result.
 #+BEGIN_SRC ocaml
   val ( <|>| ) : ('s, 'a) parser -> ('s, 'a) parser lazy_t -> ('s, 'a) parser
 #+END_SRC
-*** Basic parsers
-~sat p~ is a parser that matches an element satisfying the predicate ~p~. 
+~p *>| q~ is the lazy sequence combinator but ignores value returned by the
+parser ~p~, it's the missing bracket. The parser ~q~ is evaluated only if ~p~
+succeeded.
 #+BEGIN_SRC ocaml
-  val sat : ('a -> bool) -> ('a, 'a) parser
+  val( *>| ) : ('s, 'a) parser -> ('s, 'b) parser lazy_t -> ('s, 'b) parser
+#+END_SRC
+~p <*| q~ is the sequence combinator but ignores value returned by the parser
+~q~, it's the missing bracket. The parser ~q~ is evaluated only if ~p~
+succeeded.
+#+BEGIN_SRC ocaml
+  val( <*| ) : ('s, 'a) parser -> ('s, 'b) parser lazy_t -> ('s, 'a) parser
+#+END_SRC
+*** Basic parsers
+~satisfyp~ is a parser that matches an element satisfying the predicate ~p~. 
+#+BEGIN_SRC ocaml
+  val satisfy: ('a -> bool) -> ('a, 'a) parser
 #+END_SRC
 ~any~ is a parser that matches anything. 
 #+BEGIN_SRC ocaml
