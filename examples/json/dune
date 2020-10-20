@@ -1,0 +1,4 @@
+(executable
+  (name json)
+  (preprocess (pps ppx_deriving.show ppx_deriving.ord))
+  (libraries combo))

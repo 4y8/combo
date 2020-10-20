@@ -8,6 +8,7 @@ type jsonVal
   | JString of string
   | JArray of jsonVal list
   | JObject of (string * jsonVal) list
+[@@deriving show]
 
 let (%) f g x = f (g x)
 
@@ -65,4 +66,4 @@ let () =
   let s = read_line () in
   match jsonValue (explode s) with
     None -> print_endline "ERROR: bad expression." 
-  | Some (n, _) -> ignore(n)
+  | Some (n, _) -> (print_endline % show_jsonVal) n

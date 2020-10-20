@@ -25,6 +25,16 @@ Here is a simple calculator described in the paper:
       None -> print_endline "ERROR: bad expression." 
     | Some (n, _) -> print_int n
 #+END_SRC
+More examples can be found in the example directory (note: the JSON example
+needs this [[https://github.com/ocaml-ppx/ppx_deriving][ppx]]).
+** Installation
+Combo is not yet in opam, so it needs ~dune~ to be installed, assuming you are
+on a Unix like operating system, you can do:
+#+BEGIN_SRC shell
+  git clone https://github.com/Yul3n/combo.git
+  cd combo/src
+  dune install
+#+END_SRC
 ** Documentation (extracted from the mli file)
 *** Utils
 ~explode s~ turns the string ~s~ into a list of characters.
