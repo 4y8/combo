@@ -136,13 +136,13 @@ let sepBy sep p =
   opt [] (sepBy1 sep p)
 
 let endBy1 sep p =
-  many1 (sep <* p)
+  many1 (p <* sep)
 
 let endBy sep p =
   opt [] (endBy1 sep p)
 
 let sepEndBy1 sep p =
-  (sepBy1 sep p) <* (opt [] sep)
+  (sepBy1 sep p) <**> (opt id (id <$ sep))
 
 let sepEndBy sep p =
   opt [] (sepEndBy1 sep p)

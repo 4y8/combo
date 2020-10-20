@@ -87,7 +87,7 @@ val endBy1 : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b list) parser
 
 (** [sepEndBy sep p] is a parser that parses 0 or more times the parser [p]
    separated and optionally ended by the parser [sep]. *)
-val seEndpBy : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b list) parser
+val sepEndBy : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b list) parser
 
 (** [sepEndBy1 sep p] is a parser that parses 1 or more times the parser [p]
    separated and optionally ended by the parser [sep]. *)
@@ -187,7 +187,7 @@ val alphaNum : (char, char) parser
 val octDigit : (char, char) parser
 
 (** [hexDigit] is a parser that matches a hexadecimal digit. *)
-val octDigit : (char, char) parser
+val hexDigit : (char, char) parser
 
 (** [space] is a parser that matches a space. *)
 val space : (char, char) parser

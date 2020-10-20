@@ -33,6 +33,7 @@ on a Unix like operating system, you can do:
 #+BEGIN_SRC shell
   git clone https://github.com/Yul3n/combo.git
   cd combo/src
+  dune build ./combo.a
   dune install
 #+END_SRC
 ** Documentation (extracted from the mli file)
