@@ -129,6 +129,12 @@ let rec seq =
 let between op p cl =
   op *> p <* cl
 
+let sepBy1 sep p =
+  (List.cons) <$> p <*> many (sep *> p)
+
+let sepBy sep p =
+  opt [] (sepBy1 sep p)
+
 let satisfy p =
   fun s ->
   match s with

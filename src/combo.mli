@@ -69,6 +69,14 @@ val seq : ('s, 'a) parser list -> ('s, 'a list) parser
    returns the value of p. *)
 val between : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'c) parser -> ('s, 'b) parser
 
+(** [sepBy sep p] is a parser that parses 0 or more times the parser [p]
+   separated by the parser [sep]. *)
+val sepBy : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b list) parser
+
+(** [sepBy1 sep p] is a parser that parses 1 or more times the parser [p]
+   separated by the parser [sep]. *)
+val sepBy1 : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b list) parser
+
 (* Lazy combinators ************************************************************)
 
 (** [p <*>| q] is the lazy sequence combinator appliying the result of parser

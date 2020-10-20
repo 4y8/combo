@@ -113,6 +113,16 @@ returns the value of ~p~.
 #+BEGIN_SRC ocaml
   val between : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'c) parser -> ('s, 'b) parser
 #+END_SRC
+~sepBy sep p~ is a parser that parses 0 or more times the parser ~p~ separated
+by the parser ~sep~.
+#+BEGIN_SRC ocaml
+  val sepBy : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b list) parser
+#+END_SRC
+~sepBy1 sep p~ is a parser that parses 1 or more times the parser ~p~ separated
+by the parser ~sep~.
+#+BEGIN_SRC ocaml
+  val sepBy1 : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b list) parser
+#+END_SRC
 *** Lazy Combinators
 Lazy combinators are really useful for some recursive combinators that may cause
 a stack overflow otherwise.  
