@@ -12,7 +12,7 @@ type jsonVal
 
 let (%) f g x = f (g x)
 
-let jsonNull = (const JNull) <$> word "null"
+let jsonNull = const JNull <$> word "null"
 
 let jsonBool = 
   let jbool b = JBool b in

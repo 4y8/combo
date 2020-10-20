@@ -77,6 +77,22 @@ val sepBy : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b list) parser
    separated by the parser [sep]. *)
 val sepBy1 : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b list) parser
 
+(** [endBy sep p] is a parser that parses 0 or more times the parser [p]
+   separated and ended by the parser [sep]. *)
+val endBy : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b list) parser
+
+(** [endBy1 sep p] is a parser that parses 1 or more times the parser [p]
+   separated and ended by the parser [sep]. *)
+val endBy1 : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b list) parser
+
+(** [sepEndBy sep p] is a parser that parses 0 or more times the parser [p]
+   separated and optionally ended by the parser [sep]. *)
+val seEndpBy : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b list) parser
+
+(** [sepEndBy1 sep p] is a parser that parses 1 or more times the parser [p]
+   separated and optionally ended by the parser [sep]. *)
+val sepEndBy1 : ('s, 'a) parser -> ('s, 'b) parser -> ('s, 'b list) parser
+
 (* Lazy combinators ************************************************************)
 
 (** [p <*>| q] is the lazy sequence combinator appliying the result of parser
@@ -158,17 +174,32 @@ val lower : (char, char) parser
 (** [upper] is a parser that matches an uppercase character *)
 val upper : (char, char) parser
 
-(** [alpha] is a parser that matches an alphabet character. *)
-val alpha : (char, char) parser
+(** [letter] is a parser that matches an alphabet character. *)
+val letter : (char, char) parser
 
 (** [digit] is a parser that matches a digit. *)
 val digit : (char, char) parser
+
+(** [alphaNum] is a parser that matches a letter or a digit. *)
+val alphaNum : (char, char) parser
+
+(** [octDigit] is a parser that matches an octal digit. *)
+val octDigit : (char, char) parser
+
+(** [hexDigit] is a parser that matches a hexadecimal digit. *)
+val octDigit : (char, char) parser
 
 (** [space] is a parser that matches a space. *)
 val space : (char, char) parser
 
 (** [spaces] is a parser that matches 0 or more spaces. *)
 val spaces : (char, char list) parser
+
+(** [newline] is a parser that matches a newline character. *)
+val newline : (char, char) parser
+
+(** [tab] is a parser that matches a tab character. *)
+val tab : (char, char) parser
 
 (** [pack l p r] is a parser that matches the parser [p] between the symbols [l]
    and [r]. *)
@@ -177,5 +208,8 @@ val pack : 's list -> ('s, 'a) parser -> 's list -> ('s, 'a) parser
 (** [packs l p r] is a parser that matches the parser [p] between the strings
    [l] and [r]. *)
 val packs : string -> (char, 'a) parser -> string -> (char, 'a) parser
+
+(** [oneOf l] is a parser that matches a symbol from the list [l]. *)
+val oneOf : 'a list -> ('a, 'a) parser
 
 (* Quousque tandem abutere, Catilina, patientia nostra? ************************)

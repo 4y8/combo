@@ -135,6 +135,18 @@ let sepBy1 sep p =
 let sepBy sep p =
   opt [] (sepBy1 sep p)
 
+let endBy1 sep p =
+  many1 (sep <* p)
+
+let endBy sep p =
+  opt [] (endBy1 sep p)
+
+let sepEndBy1 sep p =
+  (sepBy1 sep p) <* (opt [] sep)
+
+let sepEndBy sep p =
+  opt [] (sepEndBy1 sep p)
+
 let satisfy p =
   fun s ->
   match s with
@@ -165,11 +177,20 @@ let lower =
 let upper =
   range 'A' 'Z'
 
-let alpha =
+let letter =
   lower <|> upper
 
 let digit =
   range '0' '9'
+
+let alphaNum =
+  letter <|> digit
+
+let octDigit =
+  range '0' '7'
+
+let hexDigit =
+  digit <|> range 'a' 'f' <|> range 'A' 'F'
 
 let any =
   function
@@ -182,8 +203,17 @@ let space =
 let spaces =
   many space
 
+let tab =
+  char '\t'
+
+let newline =
+  char '\n'
+
 let pack l p r =
   between (syms l) p (syms r)
 
 let packs l p r =
   between (word l) p (word r)
+
+let oneOf l =
+  choice (List.map sym l)
