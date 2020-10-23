@@ -65,8 +65,14 @@ let ( <|>| ) p q =
 let ( <$> ) f p =
   (return f) <*> p
 
+let ( <&> ) p f =
+  f <$> p 
+
 let ( <$ ) f p =
   (const <$> return f) <*> p
+
+let ( $> ) p f =
+  f <$ p
 
 let ( *> ) p q =
   (id <$ p) <*> q

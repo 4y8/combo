@@ -41,9 +41,17 @@ val ( <|> ) : ('s, 'a) parser -> ('s, 'a) parser -> ('s, 'a) parser
    returned by the parser [p], if he succeeds. *)
 val ( <$> ) : ('b -> 'a) -> ('s, 'b) parser -> ('s, 'a) parser
 
+(** [p <&> f] is the flipped map combinator applying the function [f] the
+   witness returned by the parser [p], if he succeeds. *)
+val ( <&> ) : ('s, 'b) parser -> ('b -> 'a) -> ('s, 'a) parser
+
 (** [f <$ p] is the map combinator ignoring the value returned by the parser
    [p]. *)
-val ( <$ ) : ('b -> 'a) -> ('s, 'c) parser -> ('s, 'b -> 'a) parser
+val ( <$ ) : 'a -> ('s, 'b) parser -> ('s, 'a) parser
+
+(** [p $> f] is the reverse map combinator ignoring the value returned by the parser
+   [p]. *)
+val ( $> ) : ('s, 'a) parser -> 'b -> ('s, 'b) parser
 
 (** [p *> q] is the sequence combinator but ignores value returned by the parser
    [p], it's the missing bracket. *)
