@@ -101,7 +101,7 @@ returned by the parser ~p~, if he succeeds.
 ~p $> f~ is the reverse map combinator ignoring the value returned by the parser
 ~p~.
 #+BEGIN_SRC ocaml
-  val ( <$ ) : ('s, 'a) parser -> 'b -> ('s, 'b) parser
+  val ( $> ) : ('s, 'a) parser -> 'b -> ('s, 'b) parser
 #+END_SRC
 ~p *> q~ is the sequence combinator but ignores value returned by the parser
 ~p~, it's the missing bracket.
