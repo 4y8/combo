@@ -31,7 +31,7 @@ needs this [[https://github.com/ocaml-ppx/ppx_deriving][ppx]]).
 Combo is not yet in opam, so it needs ~dune~ to be installed, assuming you are
 on a Unix like operating system, you can do:
 #+BEGIN_SRC shell
-  git clone https://github.com/Yul3n/combo.git
+  git clone https://github.com/4y8/combo.git
   cd combo/src
   dune build ./combo.a
   dune install
